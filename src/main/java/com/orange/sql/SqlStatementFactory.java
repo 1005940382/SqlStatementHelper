@@ -1,5 +1,8 @@
 package com.orange.sql;
 
+import com.orange.sql.impl.InsertStatement;
+import com.orange.sql.impl.SelectStatement;
+
 /**
  * @author 鞠鹏飞
  * @data 2017/8/23
@@ -16,7 +19,7 @@ public class SqlStatementFactory
             case DELETE:
                 return null;
             case SELECT:
-                return null;
+                return new SelectStatement();
             case UPDATE:
                 return null;
         }

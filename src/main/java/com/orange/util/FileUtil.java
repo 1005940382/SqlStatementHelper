@@ -15,8 +15,9 @@ import java.util.*;
 public class FileUtil
 {
     /**
-     * 读取文件
-     * @param filePath 文件路径
+     * 读取sql文件获取sql实体列表
+     * @param filePath sql文件路径
+     * @return sql实体列表
      */
     public static List<ISqlStatement> getSqlEntityListByReadFile(String filePath)
     {
@@ -33,7 +34,7 @@ public class FileUtil
                 {
                     if(!"".equals(lineText))
                     {
-                        //TODO 文件的第一个字符
+                        //TODO 文件格式处理
                         if(i == 0)
                         {
                             lineText = lineText.substring(1, lineText.length() - 1) + ";";
@@ -65,7 +66,7 @@ public class FileUtil
     /**
      * 根据sql语句生成sql语句实体
      * @param sql sql语句
-     * @return
+     * @return sql实体
      */
     public static ISqlStatement getSqlEntity(String sql)
     {
@@ -74,28 +75,7 @@ public class FileUtil
         String sqlTypeString = sqlArray[0].toUpperCase();
         SqlType sqlType = SqlType.valueOf(sqlTypeString);
         ISqlStatement sqlStatement = SqlStatementFactory.createSqlStatement(sqlType);
-
-        String[] sqlParam = sql.split("\\(|\\)");
-
-        //匹配表名
-        String[] tableNameArray = sqlParam[0].split(" ");
-        String tableName = tableNameArray[2].replace("`", "");
-        sqlStatement.setTableName(tableName);
-
-        //匹配sql参数和值
-        String paramString = sqlParam[1];
-        String valueString = sqlParam[3];
-        Map<String, String> params = new LinkedHashMap<String, String>();
-        String[] paramArray = paramString.split(",");
-        String[] valueArray = valueString.split(",");
-        for(int i = 0; i < paramArray.length; i++)
-        {
-            String param = paramArray[i].trim().replace("`", "");
-            String value = valueArray[i].trim().replace("'", "");
-            params.put(param, value);
-        }
-        sqlStatement.setParams(params);
-        return sqlStatement;
+        return sqlStatement.getSqlEntityByString(sql);
     }
 
     /**

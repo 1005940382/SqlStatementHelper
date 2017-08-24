@@ -1,5 +1,6 @@
-package com.orange.sql;
+package com.orange.sql.impl;
 
+import com.orange.sql.ISqlStatement;
 import com.orange.util.TimeUtil;
 
 import java.util.*;
@@ -7,7 +8,7 @@ import java.util.*;
 /**
  * @author 鞠鹏飞
  * @data 2017/8/23
- * @Description sql插入语句（无参数列表）
+ * @Description sql插入语句（有参数列表）
  */
 public class InsertStatement implements ISqlStatement
 {
@@ -41,6 +42,9 @@ public class InsertStatement implements ISqlStatement
         this.params = params;
     }
 
+    /**
+     * @Example INSERT INTO `TableName` (`param1`, `param2`, `param3`) VALUES ('value1', 'value2', null);
+     */
     public String getSqlStatement()
     {
         StringBuilder sql = new StringBuilder("INSERT INTO `").append(tableName).append("` ");
@@ -80,22 +84,40 @@ public class InsertStatement implements ISqlStatement
     public void translateTimestamp(String param)
     {
         String oldValue = params.get(param);
-        String newValue = oldValue;
-        //Datetime-->13位时间戳
-        if(TimeUtil.isDateTime(oldValue))
-        {
-            newValue = TimeUtil.getTimestampByString(oldValue);
-        }
-        //10位时间戳-->13位时间戳
-        else if(oldValue.length() == 10 && TimeUtil.isNumeric(oldValue))
-        {
-            newValue = oldValue + "000";
-        }
-        params.put(param, newValue);
+        params.put(param, TimeUtil.translateTimestamp(oldValue));
     }
 
     public void removeParam(String param)
     {
         params.remove(param);
+    }
+
+    /**
+     * @Example INSERT INTO `TableName` (`param1`, `param2`, `param3`) VALUES ('value1', 'value2', null);
+     */
+    public ISqlStatement getSqlEntityByString(String sql)
+    {
+        //分割sql语句
+        String[] sqlParam = sql.split("\\(|\\)");
+
+        //匹配表名
+        String[] tableNameArray = sqlParam[0].split(" ");
+        String tableName = tableNameArray[2].replace("`", "");
+        setTableName(tableName);
+
+        //匹配sql参数和值
+        String paramString = sqlParam[1];
+        String valueString = sqlParam[3];
+        Map<String, String> params = new LinkedHashMap<String, String>();
+        String[] paramArray = paramString.split(",");
+        String[] valueArray = valueString.split(",");
+        for(int i = 0; i < paramArray.length; i++)
+        {
+            String param = paramArray[i].trim().replace("`", "");
+            String value = valueArray[i].trim().replace("'", "");
+            params.put(param, value);
+        }
+        setParams(params);
+        return this;
     }
 }

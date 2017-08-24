@@ -46,5 +46,12 @@ public interface ISqlStatement
      * @param param 参数名
      */
     void removeParam(String param);
+
+    /**
+     * 根据sql语句生成sql实体
+     * @param sql sql语句
+     * @return sql实体
+     */
+    ISqlStatement getSqlEntityByString(String sql);
 }
                                                   

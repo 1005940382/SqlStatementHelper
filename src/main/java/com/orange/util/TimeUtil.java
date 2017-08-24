@@ -11,6 +11,8 @@ import java.util.Date;
  */
 public class TimeUtil
 {
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     /**
      * 字符串转时间戳
      * @param dateString 时间字符串
@@ -20,7 +22,7 @@ public class TimeUtil
     {
         try
         {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
             Date date = sdf.parse(dateString);
             return date.getTime() + "";
         }
@@ -39,7 +41,7 @@ public class TimeUtil
     public static boolean isDateTime(String time)
     {
         boolean convertSuccess = true;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
         try
         {
             sdf.setLenient(false);
@@ -67,5 +69,27 @@ public class TimeUtil
             }
         }
         return true;
+    }
+
+    /**
+     * 格式化时间字符串
+     * @param time 时间字符串
+     * @return 13位时间戳
+     */
+    public static String translateTimestamp(String time)
+    {
+        String oldValue = time;
+        String newValue = oldValue;
+        //Datetime-->13位时间戳
+        if(TimeUtil.isDateTime(oldValue))
+        {
+            newValue = TimeUtil.getTimestampByString(oldValue);
+        }
+        //10位时间戳-->13位时间戳
+        else if(oldValue.length() == 10 && TimeUtil.isNumeric(oldValue))
+        {
+            newValue = oldValue + "000";
+        }
+        return newValue;
     }
 }

@@ -13,10 +13,12 @@ import java.util.Map;
  */
 public class Main
 {
+    private static final String OLD_FILE_PATH = "C:\\Users\\ddpai\\Desktop\\s1.sql";
+    private static final String NEW_FILE_PATH = "C:\\Users\\ddpai\\Desktop\\s3.sql";
+
     public static void main(String argv[])
     {
-        String filePath = "C:\\Users\\ddpai\\Desktop\\s1.sql";
-        List<ISqlStatement> sqlStatements = FileUtil.getSqlEntityListByReadFile(filePath);
+        List<ISqlStatement> sqlStatements = FileUtil.getSqlEntityListByReadFile(OLD_FILE_PATH);
         for(ISqlStatement sqlStatement : sqlStatements)
         {
             //TODO 执行操作
@@ -27,9 +29,10 @@ public class Main
             sqlStatement.translateTimestamp("expiry_date");
             sqlStatement.putParam("total_flow", "0");
 
+            //打印语句
             printSql(sqlStatement);
         }
-        FileUtil.writeFileBySqlEntityList("C:\\Users\\ddpai\\Desktop\\s2.sql", sqlStatements);
+        FileUtil.writeFileBySqlEntityList(NEW_FILE_PATH, sqlStatements);
 
     }
 
